@@ -63,7 +63,14 @@ namespace WebApplication1
             var dirPath = Path.GetDirectoryName(path);
             if (!Directory.Exists(dirPath))
             {
-                Directory.CreateDirectory(dirPath);
+                try
+                {
+                    Directory.CreateDirectory(dirPath);
+                }
+                catch (Exception e)
+                {
+                    return "Create Directory failed: " + e.Message;
+                }
             }
             try
             {
@@ -74,7 +81,7 @@ namespace WebApplication1
             }
             catch (IOException ioe)
             {
-                return ioe.Message;
+                return "Create File failed: " + ioe.Message;
             }
         }
 
