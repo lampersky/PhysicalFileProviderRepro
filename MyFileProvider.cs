@@ -2,36 +2,25 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.FileProviders.Physical;
 
 namespace WebApplication1
 {
     public class MyFileProvider : PhysicalFileProvider, IMyFileProvider
     {
-        public MyFileProvider(string root) : base(root)
-        {
+        //some problematic file names
+        private readonly string[] Paths = new string[] {
+            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\firstFile.txt",
+            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
+        };
 
-        }
+        public MyFileProvider(string root) : base(root) {}
 
-        public MyFileProvider(string root, ExclusionFilters filters) : base(root, filters)
-        {
-
-        }
-
-        public IDirectoryContents MyGetDirectoryContents(string subpath = null)
-        {
-            return GetDirectoryContents(subpath ?? String.Empty);
-        }
-
-        public IFileInfo MyGetFileInfo(string subpath)
-        {
-            return GetFileInfo(subpath);
-        }
-
+        /// <summary>
+        /// method taken from OC (DefaultMediaFileStoreCacheFileProvider)
+        /// </summary>
+        /// <returns></returns>
         public Task<bool> PurgeAsync()
         {
             var hasErrors = false;
@@ -44,7 +33,7 @@ namespace WebApplication1
                     {
                         Directory.Delete(fileInfo.PhysicalPath, true);
                     }
-                    catch (IOException ex)
+                    catch (IOException)
                     {
                         hasErrors = true;
                     }
@@ -55,17 +44,21 @@ namespace WebApplication1
                     {
                         File.Delete(fileInfo.PhysicalPath);
                     }
-                    catch (IOException ex)
+                    catch (IOException)
                     {
                         hasErrors = true;
                     }
                 }
             }
-
             return Task.FromResult(hasErrors);
         }
 
-        static private (bool, string) CreateFile(string path)
+        /// <summary>
+        /// this methods creates directory tree and file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>null for success, error massage if fails</returns>
+        static private string CreateFile(string path)
         {
             var dirPath = Path.GetDirectoryName(path);
             if (!Directory.Exists(dirPath))
@@ -75,47 +68,43 @@ namespace WebApplication1
             try
             {
                 using var fs = File.Create(path);
-                byte[] info = new UTF8Encoding(true).GetBytes("example file");
-                fs.Write(info, 0, info.Length);
-                return (false, "success");
+                byte[] content = new UTF8Encoding(true).GetBytes("example file");
+                fs.Write(content, 0, content.Length);
+                return null;
             }
             catch (IOException ioe)
             {
-                return (true, ioe.Message);
+                return ioe.Message;
             }
         }
 
-        private string[] Paths = new string[] {
-                "FirstLevelDirectory\\SecondLevelDirecotry\\ThirdLevelDirectory\\firstFile.txt",
-                "FirstLevelDirectory\\SecondLevelDirecotry\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
-                //"111\\222\\333\\secondFile.txt",
-                //"111\\222\\333\\444\\555\\666\\777\\888\\999\\000\\anotherFile.txt",
-                //"111\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
-                //"testDirecotry\\file.txt"
-            };
-
+        /// <summary>
+        /// this methods creates all problematic files
+        /// </summary>
+        /// <returns></returns>
         public Task<Dictionary<string, string>> Recreate()
         {
-            var hasErrors = false;
             var errors = new Dictionary<string, string>();
-
             foreach (var path in Paths)
             {
                 var result = CreateFile(Root + path);
-                hasErrors = hasErrors || result.Item1;
-                if (result.Item1) {
-                    errors.Add(path, result.Item2);
+                if (result != null) {
+                    errors.Add(path, result);
                 }
             }
             return Task.FromResult(errors);
         }
 
+        /// <summary>
+        /// tries to read files and return their contents or exception message (if occurs)
+        /// </summary>
+        /// <returns></returns>
         public Task<Dictionary<string, string>> ReadThemAll()
         {
             var contents = new Dictionary<string, string>();
             foreach (var path in Paths)
             {
-                var content = "";
+                string content;
                 try
                 {
                     content = File.ReadAllText(Root + path);

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
@@ -18,12 +17,6 @@ namespace WebApplication1.Controllers
         {
             var result = await _myFileProvider.Recreate();
             return Ok(new { Errors = result });
-        }
-
-        [HttpGet("directory-contents")]
-        public IActionResult DirectoryContents()
-        {
-            return Ok(_myFileProvider.MyGetDirectoryContents(String.Empty));
         }
 
         [HttpGet("purge")]
