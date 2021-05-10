@@ -7,19 +7,13 @@
     <p>Repro repo for <a href="https://github.com/OrchardCMS/OrchardCore/issues/9319">System.IO.IOException inside MediaFileStoreResolverMiddleware #9319</a> issue.</p>
 </div>
 
-First way:
+Repro steps:
 <ol>
     <li><a href="/recreate-files-and-directories">create files and dirs,</a></li>
     <li><a href="/read-them-all">read them all,</a></li>
     <li><a href="/purge">purge,</a></li>
     <li><a href="/read-them-all">read them all again,</a></li>
     <li><a href="/recreate-files-and-directories">try to recreate files and dirs,</a></li>
-    <li><a href="/read-them-all">read them all and observe the issue.</a></li>
-</ol>
-
-Second way:
-<ol>
-    <li>Make sure "ms-cache" is empty,</li>
-    <li><a href="/read-them-all">try to read non exisitng files,</a></li>
-    <li><a href="/recreate-files-and-directories">try to recreate files and dirs.</a></li>
+    <li><a href="/read-them-all">read them all and observe the issue,</a></li>
+    <li>if you were able to read file contents go to point 1 and repeat steps.</li>
 </ol>
