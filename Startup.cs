@@ -18,8 +18,9 @@ namespace WebApplication1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddHttpClient();
 
-            services.AddSingleton<IMyFileProvider>(serviceProvider =>
+            services.AddScoped<IMyFileProvider>(serviceProvider =>
             {
                 var hostingEnvironment = serviceProvider.GetRequiredService<IWebHostEnvironment>();
                 var root = $"{hostingEnvironment.WebRootPath}\\ms-cache\\Default";
