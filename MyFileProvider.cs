@@ -64,7 +64,7 @@ namespace WebApplication1
         static private string CreateFile(string path)
         {
             var dirPath = Path.GetDirectoryName(path);
-            if (!Directory.Exists(dirPath))
+            //if (!Directory.Exists(dirPath))
             {
                 try
                 {
