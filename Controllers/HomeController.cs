@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
@@ -7,19 +6,10 @@ namespace WebApplication1.Controllers
     public class HomeController : Controller
     {
         private readonly IMyFileProvider _myFileProvider;
-        private readonly IApplicationLifetime _applicationLifetime;
 
-        public HomeController(IMyFileProvider myFileProvider, IApplicationLifetime applicationLifetime)
+        public HomeController(IMyFileProvider myFileProvider)
         {
             _myFileProvider = myFileProvider;
-            _applicationLifetime = applicationLifetime;
-        }
-
-        [HttpGet("restart")]
-        public IActionResult Restart()
-        {
-            _applicationLifetime.StopApplication();
-            return new EmptyResult();
         }
 
         [HttpGet("recreate-files-and-directories")]
@@ -40,7 +30,6 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> ReadThemAll()
         {
             var result = await _myFileProvider.ReadThemAll();
-            result.Add("Testing", "Testing123456");
             return Ok(new { Contents = result });
         }
 
