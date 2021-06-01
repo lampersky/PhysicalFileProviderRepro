@@ -106,12 +106,12 @@ namespace WebApplication1
         /// <returns>null for success, error massage if fails</returns>
         static private string CreateFile(string path)
         {
-            var dirPath = Path.GetDirectoryName(path);
+            var dirPath = "\\\\?\\" + Path.GetDirectoryName(path);
             if (!Directory.Exists(dirPath))
             {
                 try
                 {
-                    Directory.CreateDirectory("\\\\?\\" + dirPath);
+                    Directory.CreateDirectory(dirPath);
                 }
                 catch (Exception e)
                 {
