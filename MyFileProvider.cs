@@ -27,8 +27,8 @@ namespace WebApplication1
         public async Task<bool> PurgeAsync()
         {
             var filesErrors = await PurgeFilesAsync("");
-            var directoriesErrors = await PurgeDirectoriesAsync("");
-            return filesErrors || directoriesErrors;
+            //var directoriesErrors = await PurgeDirectoriesAsync("");
+            return filesErrors; // || directoriesErrors;
         }
 
         public async Task<bool> PurgeFilesAsync(string path = "")
