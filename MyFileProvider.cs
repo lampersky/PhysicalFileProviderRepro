@@ -82,8 +82,9 @@ namespace WebApplication1
                         var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                         hasErrors = await PurgeDirectoriesAsync(subPath);
 
-                        Directory.Delete(fileInfo.PhysicalPath);
-                        //Directory.Move(fileInfo.PhysicalPath, Root + "tmp/" + subPath);
+                        //Directory.Delete(fileInfo.PhysicalPath);
+                        Directory.Move(fileInfo.PhysicalPath, Root + "tmp/" + subPath);
+                        Directory.Delete(Root + "tmp/" + subPath);
                     }
                     catch (IOException)
                     {
