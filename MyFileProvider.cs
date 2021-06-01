@@ -37,7 +37,7 @@ namespace WebApplication1
                     {
                         var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                         hasErrors = await PurgeAsync(subPath);
-                        Directory.Delete(fileInfo.PhysicalPath);
+                        //Directory.Delete(fileInfo.PhysicalPath);
                     }
                     catch (IOException)
                     {
