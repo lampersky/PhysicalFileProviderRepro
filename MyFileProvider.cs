@@ -25,31 +25,35 @@ namespace WebApplication1
         /// method taken from OC (DefaultMediaFileStoreCacheFileProvider)
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> PurgeAsync()
+        public async Task<Dictionary<string, string>> PurgeAsync()
         {
             var filesErrors = await PurgeFilesAsync("");
             var directoriesErrors = await PurgeDirectoriesAsync("");
             //var createErrors = await Recreate();
-            return filesErrors || directoriesErrors; // || createErrors.Keys.Any();
+
+            return filesErrors
+                .Concat(directoriesErrors)
+                .ToDictionary(x => x.Key, x => x.Value); // || directoriesErrors; // || createErrors.Keys.Any();
         }
 
-        public async Task<bool> PurgeFilesAsync(string path = "")
+        public async Task<Dictionary<string, string>> PurgeFilesAsync(string path = "")
         {
-            var hasErrors = false;
+            var errors = new Dictionary<string, string>();
 
             var folders = GetDirectoryContents(path);
             foreach (var fileInfo in folders)
             {
                 if (fileInfo.IsDirectory)
                 {
+                    var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                     try
                     {
-                        var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
-                        hasErrors = await PurgeFilesAsync(subPath);
+                        var test = await PurgeFilesAsync(subPath);
+                        errors.Concat(test).ToDictionary(x => x.Key, x => x.Value);
                     }
-                    catch (IOException)
+                    catch (Exception e)
                     {
-                        hasErrors = true;
+                        errors.Add(subPath, e.Message);
                     }
                 }
                 else
@@ -58,42 +62,43 @@ namespace WebApplication1
                     {
                         File.Delete(fileInfo.PhysicalPath);
                     }
-                    catch (IOException)
+                    catch (Exception e)
                     {
-                        hasErrors = true;
+                        errors.Add(fileInfo.PhysicalPath, e.Message);
                     }
                 }
             }
 
-            return hasErrors;
+            return errors;
         }
 
-        public async Task<bool> PurgeDirectoriesAsync(string path = "")
+        public async Task<Dictionary<string, string>> PurgeDirectoriesAsync(string path = "")
         {
-            var hasErrors = false;
+            var errors = new Dictionary<string, string>();
 
             var folders = GetDirectoryContents(path);
             foreach (var fileInfo in folders)
             {
                 if (fileInfo.IsDirectory)
                 {
+                    var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                     try
                     {
-                        var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
-                        hasErrors = await PurgeDirectoriesAsync(subPath);
+                        var test = await PurgeDirectoriesAsync(subPath);
+                        errors.Concat(test).ToDictionary(x => x.Key, x => x.Value);
 
                         //Directory.Delete(fileInfo.PhysicalPath);
                         Directory.Move(fileInfo.PhysicalPath, Root + "tmp/" + subPath);
                         Directory.Delete(Root + "tmp/" + subPath);
                     }
-                    catch (IOException)
+                    catch (Exception e)
                     {
-                        hasErrors = true;
+                        errors.Add(subPath, e.Message);
                     }
                 }
             }
 
-            return hasErrors;
+            return errors;
         }
 
         /// <summary>

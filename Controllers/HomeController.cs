@@ -23,7 +23,7 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> Purge()
         {
             var result = await _myFileProvider.PurgeAsync();
-            return Ok(new { HasErrors = result });
+            return Ok(new { Errors = result });
         }
 
         [HttpGet("read-them-all")]
