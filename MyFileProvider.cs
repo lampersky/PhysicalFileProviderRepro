@@ -18,23 +18,26 @@ namespace WebApplication1
             "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
         };
 
-        public MyFileProvider(string root) : base(root) {}
+        public MyFileProvider(string root) : base(root) { }
 
         /// <summary>
         /// method taken from OC (DefaultMediaFileStoreCacheFileProvider)
         /// </summary>
         /// <returns></returns>
-        public Task<bool> PurgeAsync()
+        public async Task<bool> PurgeAsync(string path = "")
         {
             var hasErrors = false;
-            var folders = GetDirectoryContents(String.Empty);
+
+            var folders = GetDirectoryContents(path);
             foreach (var fileInfo in folders)
             {
                 if (fileInfo.IsDirectory)
                 {
                     try
                     {
-                        Directory.Delete(fileInfo.PhysicalPath, true);
+                        var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
+                        hasErrors = await PurgeAsync(subPath);
+                        Directory.Delete(fileInfo.PhysicalPath);
                     }
                     catch (IOException)
                     {
@@ -53,7 +56,9 @@ namespace WebApplication1
                     }
                 }
             }
-            return Task.FromResult(hasErrors);
+
+            return hasErrors;
+            //return Task.FromResult(hasErrors);
         }
 
         /// <summary>
@@ -77,13 +82,9 @@ namespace WebApplication1
             }
             try
             {
-                using var writer = File.CreateText(path);
-                writer.Write("example file");
-
-
-                //using var fs = File.Create(path);
-                //byte[] content = new UTF8Encoding(true).GetBytes("example file");
-                //fs.Write(content, 0, content.Length);
+                using var fs = File.Create(path);
+                byte[] content = new UTF8Encoding(true).GetBytes("example file");
+                fs.Write(content, 0, content.Length);
                 return null;
             }
             catch (IOException ioe)
@@ -102,7 +103,8 @@ namespace WebApplication1
             foreach (var path in Paths)
             {
                 var result = CreateFile(Root + path);
-                if (result != null) {
+                if (result != null)
+                {
                     errors.Add(path, result);
                 }
             }
