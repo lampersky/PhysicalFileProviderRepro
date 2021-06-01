@@ -24,7 +24,14 @@ namespace WebApplication1
         /// method taken from OC (DefaultMediaFileStoreCacheFileProvider)
         /// </summary>
         /// <returns></returns>
-        public async Task<bool> PurgeAsync(string path = "")
+        public async Task<bool> PurgeAsync()
+        {
+            var filesErrors = await PurgeFilesAsync("");
+            var directoriesErrors = await PurgeDirectoriesAsync("");
+            return filesErrors || directoriesErrors;
+        }
+
+        public async Task<bool> PurgeFilesAsync(string path = "")
         {
             var hasErrors = false;
 
@@ -36,8 +43,7 @@ namespace WebApplication1
                     try
                     {
                         var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
-                        hasErrors = await PurgeAsync(subPath);
-                        //Directory.Delete(fileInfo.PhysicalPath);
+                        hasErrors = await PurgeFilesAsync(subPath);
                     }
                     catch (IOException)
                     {
@@ -58,7 +64,31 @@ namespace WebApplication1
             }
 
             return hasErrors;
-            //return Task.FromResult(hasErrors);
+        }
+
+        public async Task<bool> PurgeDirectoriesAsync(string path = "")
+        {
+            var hasErrors = false;
+
+            var folders = GetDirectoryContents(path);
+            foreach (var fileInfo in folders)
+            {
+                if (fileInfo.IsDirectory)
+                {
+                    try
+                    {
+                        var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
+                        hasErrors = await PurgeDirectoriesAsync(subPath);
+                        Directory.Delete(fileInfo.PhysicalPath);
+                    }
+                    catch (IOException)
+                    {
+                        hasErrors = true;
+                    }
+                }
+            }
+
+            return hasErrors;
         }
 
         /// <summary>
