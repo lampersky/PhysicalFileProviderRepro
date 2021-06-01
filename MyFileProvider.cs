@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
@@ -28,7 +29,8 @@ namespace WebApplication1
         {
             var filesErrors = await PurgeFilesAsync("");
             var directoriesErrors = await PurgeDirectoriesAsync("");
-            return filesErrors || directoriesErrors;
+            var createErrors = await Recreate();
+            return filesErrors || directoriesErrors || createErrors.Keys.Any();
         }
 
         public async Task<bool> PurgeFilesAsync(string path = "")
