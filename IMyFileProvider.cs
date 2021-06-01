@@ -5,7 +5,7 @@ namespace WebApplication1
 {
     public interface IMyFileProvider
     {
-        Task<bool> PurgeAsync();
+        Task<bool> PurgeAsync(string path = "");
         Task<Dictionary<string, string>> Recreate();
         Task<Dictionary<string, string>> ReadThemAll();
     }
