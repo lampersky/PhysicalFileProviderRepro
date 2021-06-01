@@ -29,8 +29,8 @@ namespace WebApplication1
         {
             var filesErrors = await PurgeFilesAsync("");
             var directoriesErrors = await PurgeDirectoriesAsync("");
-            var createErrors = await Recreate();
-            return filesErrors || directoriesErrors || createErrors.Keys.Any();
+            //var createErrors = await Recreate();
+            return filesErrors || directoriesErrors; // || createErrors.Keys.Any();
         }
 
         public async Task<bool> PurgeFilesAsync(string path = "")
