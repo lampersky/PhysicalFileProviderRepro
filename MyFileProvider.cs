@@ -132,7 +132,7 @@ namespace WebApplication1
             }
             try
             {
-                using var fs = File.Create(path);
+                using var fs = File.Create("\\\\?\\" + path);
                 byte[] content = new UTF8Encoding(true).GetBytes("example file");
                 fs.Write(content, 0, content.Length);
                 return null;
@@ -174,7 +174,7 @@ namespace WebApplication1
                 string content;
                 try
                 {
-                    content = File.ReadAllText(Root + path);
+                    content = File.ReadAllText("\\\\?\\" + Root + path);
                 }
                 catch (Exception e)
                 {
