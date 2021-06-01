@@ -64,7 +64,7 @@ namespace WebApplication1
         static private string CreateFile(string path)
         {
             var dirPath = Path.GetDirectoryName(path);
-            //if (!Directory.Exists(dirPath))
+            if (!Directory.Exists(dirPath))
             {
                 try
                 {
@@ -77,9 +77,13 @@ namespace WebApplication1
             }
             try
             {
-                using var fs = File.Create(path);
-                byte[] content = new UTF8Encoding(true).GetBytes("example file");
-                fs.Write(content, 0, content.Length);
+                using var writer = File.CreateText(path);
+                writer.Write("example file");
+
+
+                //using var fs = File.Create(path);
+                //byte[] content = new UTF8Encoding(true).GetBytes("example file");
+                //fs.Write(content, 0, content.Length);
                 return null;
             }
             catch (IOException ioe)
