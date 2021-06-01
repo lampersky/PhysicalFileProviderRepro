@@ -87,6 +87,7 @@ namespace WebApplication1
                         var newErrors = await PurgeDirectoriesAsync(subPath);
                         errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
 
+                        File.SetAttributes(fileInfo.PhysicalPath, FileAttributes.Normal);
                         Directory.Delete(fileInfo.PhysicalPath);
                     }
                     catch (Exception e)
@@ -125,9 +126,9 @@ namespace WebApplication1
                 fs.Write(content, 0, content.Length);
                 return null;
             }
-            catch (IOException ioe)
+            catch (Exception e)
             {
-                return "Create File failed: " + ioe.Message;
+                return "Create File failed: " + e.Message;
             }
         }
 
@@ -146,6 +147,7 @@ namespace WebApplication1
                     errors.Add(path, result);
                 }
             }
+
             return Task.FromResult(errors);
         }
 
@@ -170,6 +172,7 @@ namespace WebApplication1
                 contents.Add(path, content);
 
             }
+
             return Task.FromResult(contents);
         }
     }
