@@ -84,15 +84,14 @@ namespace WebApplication1
                     var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                     try
                     {
-                        var newErrors = await PurgeDirectoriesAsync(subPath);
-                        errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
+                        //var newErrors = await PurgeDirectoriesAsync(subPath);
+                        //errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
 
-                        File.SetAttributes(fileInfo.PhysicalPath, FileAttributes.Normal);
-                        Directory.Delete("\\\\?\\" + fileInfo.PhysicalPath);
+                        Directory.Delete("\\\\?\\" + fileInfo.PhysicalPath, true);
                     }
                     catch (Exception e)
                     {
-                        errors.Add(subPath, e.Message);
+                        errors.Add(fileInfo.PhysicalPath, e.Message);
                     }
                 }
             }
