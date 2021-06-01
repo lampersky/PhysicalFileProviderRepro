@@ -48,8 +48,8 @@ namespace WebApplication1
                     var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                     try
                     {
-                        var test = await PurgeFilesAsync(subPath);
-                        errors.Concat(test).ToDictionary(x => x.Key, x => x.Value);
+                        var newErrors = await PurgeFilesAsync(subPath);
+                        errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
                     }
                     catch (Exception e)
                     {
@@ -84,12 +84,10 @@ namespace WebApplication1
                     var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                     try
                     {
-                        var test = await PurgeDirectoriesAsync(subPath);
-                        errors.Concat(test).ToDictionary(x => x.Key, x => x.Value);
+                        var newErrors = await PurgeDirectoriesAsync(subPath);
+                        errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
 
-                        //Directory.Delete(fileInfo.PhysicalPath);
-                        Directory.Move(fileInfo.PhysicalPath, Root + "tmp/" + subPath);
-                        Directory.Delete(Root + "tmp/" + subPath);
+                        Directory.Delete(fileInfo.PhysicalPath);
                     }
                     catch (Exception e)
                     {
