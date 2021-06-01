@@ -27,8 +27,8 @@ namespace WebApplication1
         public async Task<bool> PurgeAsync()
         {
             var filesErrors = await PurgeFilesAsync("");
-            //var directoriesErrors = await PurgeDirectoriesAsync("");
-            return filesErrors; // || directoriesErrors;
+            var directoriesErrors = await PurgeDirectoriesAsync("");
+            return filesErrors || directoriesErrors;
         }
 
         public async Task<bool> PurgeFilesAsync(string path = "")
@@ -79,7 +79,9 @@ namespace WebApplication1
                     {
                         var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                         hasErrors = await PurgeDirectoriesAsync(subPath);
+
                         Directory.Delete(fileInfo.PhysicalPath);
+                        //Directory.Move(fileInfo.PhysicalPath, Root + "tmp/" + subPath);
                     }
                     catch (IOException)
                     {
