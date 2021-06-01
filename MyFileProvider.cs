@@ -72,7 +72,7 @@ namespace WebApplication1
             return errors;
         }
 
-        public async Task<Dictionary<string, string>> PurgeDirectoriesAsync(string path = "")
+        public Task<Dictionary<string, string>> PurgeDirectoriesAsync(string path = "")
         {
             var errors = new Dictionary<string, string>();
 
@@ -81,7 +81,7 @@ namespace WebApplication1
             {
                 if (fileInfo.IsDirectory)
                 {
-                    var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
+                    //var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                     try
                     {
                         //var newErrors = await PurgeDirectoriesAsync(subPath);
@@ -96,7 +96,7 @@ namespace WebApplication1
                 }
             }
 
-            return errors;
+            return Task.FromResult(errors);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace WebApplication1
             {
                 try
                 {
-                    Directory.CreateDirectory(dirPath);
+                    Directory.CreateDirectory("\\\\?\\" + dirPath);
                 }
                 catch (Exception e)
                 {
