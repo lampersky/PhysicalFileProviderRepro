@@ -16,7 +16,9 @@ namespace WebApplication1
             "FirstLevelDirectory\\secondFile.txt",
             "FirstLevelDirectory\\SecondLevelDirectory\\thirdFile.txt",
             "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\fourthFile.txt",
-            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
+            //"FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
+            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA-6C-Loginpage-NETWORKINGLOUNGE(f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
+            //"C:\\home\\site\\wwwroot\\wwwroot\\ms-cache\\Default\\FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
         };
 
         public MyFileProvider(string root) : base(root) { }
