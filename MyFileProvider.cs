@@ -27,50 +27,51 @@ namespace WebApplication1
         /// <returns></returns>
         public async Task<Dictionary<string, string>> PurgeAsync()
         {
-            var filesErrors = await PurgeFilesAsync("");
+            //var filesErrors = await PurgeFilesAsync("");
             var directoriesErrors = await PurgeDirectoriesAsync("");
             //var createErrors = await Recreate();
 
-            return filesErrors
-                .Concat(directoriesErrors)
-                .ToDictionary(x => x.Key, x => x.Value); // || directoriesErrors; // || createErrors.Keys.Any();
+            return directoriesErrors
+                //.Concat(directoriesErrors)
+                //.ToDictionary(x => x.Key, x => x.Value)
+                ; // || directoriesErrors; // || createErrors.Keys.Any();
         }
 
-        public async Task<Dictionary<string, string>> PurgeFilesAsync(string path = "")
-        {
-            var errors = new Dictionary<string, string>();
+        //public async Task<Dictionary<string, string>> PurgeFilesAsync(string path = "")
+        //{
+        //    var errors = new Dictionary<string, string>();
 
-            var folders = GetDirectoryContents(path);
-            foreach (var fileInfo in folders)
-            {
-                if (fileInfo.IsDirectory)
-                {
-                    var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
-                    try
-                    {
-                        var newErrors = await PurgeFilesAsync(subPath);
-                        errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
-                    }
-                    catch (Exception e)
-                    {
-                        errors.Add(subPath, e.Message);
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        File.Delete(fileInfo.PhysicalPath);
-                    }
-                    catch (Exception e)
-                    {
-                        errors.Add(fileInfo.PhysicalPath, e.Message);
-                    }
-                }
-            }
+        //    var folders = GetDirectoryContents(path);
+        //    foreach (var fileInfo in folders)
+        //    {
+        //        if (fileInfo.IsDirectory)
+        //        {
+        //            var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
+        //            try
+        //            {
+        //                var newErrors = await PurgeFilesAsync(subPath);
+        //                errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                errors.Add(subPath, e.Message);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            try
+        //            {
+        //                File.Delete(fileInfo.PhysicalPath);
+        //            }
+        //            catch (Exception e)
+        //            {
+        //                errors.Add(fileInfo.PhysicalPath, e.Message);
+        //            }
+        //        }
+        //    }
 
-            return errors;
-        }
+        //    return errors;
+        //}
 
         public Task<Dictionary<string, string>> PurgeDirectoriesAsync(string path = "")
         {
@@ -88,6 +89,17 @@ namespace WebApplication1
                         //errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
 
                         Directory.Delete("\\\\?\\" + fileInfo.PhysicalPath, true);
+                    }
+                    catch (Exception e)
+                    {
+                        errors.Add(fileInfo.PhysicalPath, e.Message);
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        File.Delete(fileInfo.PhysicalPath);
                     }
                     catch (Exception e)
                     {
