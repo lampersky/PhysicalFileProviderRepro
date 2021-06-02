@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.FileProviders;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.FileProviders;
 
 namespace WebApplication1
 {
@@ -14,8 +14,8 @@ namespace WebApplication1
             "firstFile.txt",
             "FirstLevelDirectory\\secondFile.txt",
             "FirstLevelDirectory\\SecondLevelDirectory\\thirdFile.txt",
-            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevDirectory\\fourthFile.txt",
-            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
+            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\fourthFile.txt",
+            "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
         };
 
         public MyFileProvider(string root) : base(root) { }
@@ -99,15 +99,12 @@ namespace WebApplication1
             var errors = new Dictionary<string, string>();
             foreach (var path in Paths)
             {
-                var test = (Root + path).Length;
-
                 var result = CreateFile(Root + path);
                 if (result != null)
                 {
                     errors.Add(path, result);
                 }
             }
-
             return Task.FromResult(errors);
         }
 
@@ -132,7 +129,6 @@ namespace WebApplication1
                 contents.Add(path, content);
 
             }
-
             return Task.FromResult(contents);
         }
     }
