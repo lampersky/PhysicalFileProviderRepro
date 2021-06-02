@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.FileProviders;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.FileProviders;
 
 namespace WebApplication1
 {
@@ -16,10 +15,7 @@ namespace WebApplication1
             "FirstLevelDirectory\\secondFile.txt",
             "FirstLevelDirectory\\SecondLevelDirectory\\thirdFile.txt",
             "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevDirectory\\fourthFile.txt",
-            //"FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
             "FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
-            //"FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA-6C-Loginpage-NETWORKINGLOUNGE(f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
-            //"C:\\home\\site\\wwwroot\\wwwroot\\ms-cache\\Default\\FirstLevelDirectory\\SecondLevelDirectory\\ThirdLevelDirectory\\1611678346913_20_INDIA - 6C - Login page - NETWORKING LOUNGE (f5e6955f-d106-4ebb-b46a-a83e9cd0845d).txt",
         };
 
         public MyFileProvider(string root) : base(root) { }
@@ -28,70 +24,18 @@ namespace WebApplication1
         /// method taken from OC (DefaultMediaFileStoreCacheFileProvider)
         /// </summary>
         /// <returns></returns>
-        public async Task<Dictionary<string, string>> PurgeAsync()
-        {
-            //var filesErrors = await PurgeFilesAsync("");
-            var directoriesErrors = await PurgeDirectoriesAsync("");
-            //var createErrors = await Recreate();
-
-            return directoriesErrors
-                //.Concat(directoriesErrors)
-                //.ToDictionary(x => x.Key, x => x.Value)
-                ; // || directoriesErrors; // || createErrors.Keys.Any();
-        }
-
-        //public async Task<Dictionary<string, string>> PurgeFilesAsync(string path = "")
-        //{
-        //    var errors = new Dictionary<string, string>();
-
-        //    var folders = GetDirectoryContents(path);
-        //    foreach (var fileInfo in folders)
-        //    {
-        //        if (fileInfo.IsDirectory)
-        //        {
-        //            var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
-        //            try
-        //            {
-        //                var newErrors = await PurgeFilesAsync(subPath);
-        //                errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
-        //            }
-        //            catch (Exception e)
-        //            {
-        //                errors.Add(subPath, e.Message);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            try
-        //            {
-        //                File.Delete(fileInfo.PhysicalPath);
-        //            }
-        //            catch (Exception e)
-        //            {
-        //                errors.Add(fileInfo.PhysicalPath, e.Message);
-        //            }
-        //        }
-        //    }
-
-        //    return errors;
-        //}
-
-        public Task<Dictionary<string, string>> PurgeDirectoriesAsync(string path = "")
+        public Task<Dictionary<string, string>> PurgeAsync()
         {
             var errors = new Dictionary<string, string>();
 
-            var folders = GetDirectoryContents(path);
+            var folders = GetDirectoryContents("");
             foreach (var fileInfo in folders)
             {
                 if (fileInfo.IsDirectory)
                 {
-                    //var subPath = Path.GetRelativePath(Root, fileInfo.PhysicalPath);
                     try
                     {
-                        //var newErrors = await PurgeDirectoriesAsync(subPath);
-                        //errors = errors.Concat(newErrors).ToDictionary(x => x.Key, x => x.Value);
-
-                        Directory.Delete("\\\\?\\" + fileInfo.PhysicalPath, true);
+                        Directory.Delete(fileInfo.PhysicalPath, true);
                     }
                     catch (Exception e)
                     {
@@ -121,7 +65,7 @@ namespace WebApplication1
         /// <returns>null for success, error massage if fails</returns>
         static private string CreateFile(string path)
         {
-            var dirPath = "\\\\?\\" + Path.GetDirectoryName(path);
+            var dirPath = Path.GetDirectoryName(path);
             if (!Directory.Exists(dirPath))
             {
                 try
@@ -135,7 +79,7 @@ namespace WebApplication1
             }
             try
             {
-                using var fs = File.Create("\\\\?\\" + path);
+                using var fs = File.Create(path);
                 byte[] content = new UTF8Encoding(true).GetBytes("example file");
                 fs.Write(content, 0, content.Length);
                 return null;
@@ -155,6 +99,8 @@ namespace WebApplication1
             var errors = new Dictionary<string, string>();
             foreach (var path in Paths)
             {
+                var test = (Root + path).Length;
+
                 var result = CreateFile(Root + path);
                 if (result != null)
                 {
@@ -177,7 +123,7 @@ namespace WebApplication1
                 string content;
                 try
                 {
-                    content = File.ReadAllText("\\\\?\\" + Root + path);
+                    content = File.ReadAllText(Root + path);
                 }
                 catch (Exception e)
                 {
